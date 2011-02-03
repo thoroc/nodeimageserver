@@ -141,9 +141,18 @@ var server = http.createServer(function(req, res){
           if (filePath.length > 1) {
             fileStrs.push(makeLink(path.dirname(filePath), ".."));
           }
-          files.sort();
+          files.sort(function(a,b){
+            a = a.toLowerCase();
+            b = b.toLowerCase();
+            if (a > b) return 1;
+            if (a < b) return -1;
+            return 0;
+          });
           for (var ii = 0; ii < files.length; ++ii) {
-            fileStrs.push(makeLink(path.join(filePath, files[ii]), files[ii]));
+            var file = files[ii];
+            if (!startsWith(file, ".")) {
+              fileStrs.push(makeLink(path.join(filePath, file), file));
+            }
           }
           fileStrs.push('</ul>');
           fileStrs.push(g.endHTML);

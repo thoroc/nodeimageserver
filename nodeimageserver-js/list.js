@@ -35,7 +35,14 @@ $(function(){
   var currentIndex;
   var currentImgWidth;
   var currentImgHeight;
+  var scrollY;
+  var scrollYStart = 0;
+  var scrolling = false;
+  var scrollHeight = 0;
   var img;
+  var canvas;
+  var drawWidth;
+  var drawHeight;
 
   function extension(path) {
     var m = path.match(/\.[^\.]+$/);
@@ -88,10 +95,48 @@ $(function(){
     }
   }
 
+  function drawImage() {
+//c    var ctx = canvas.getContext("2d");
+//c    ctx.drawImage(img, 0, -scrollY, drawWidth, drawHeight);
+  }
+
   function resizeImage() {
+    //c scrollY = 0;
+    //c canvas.width = $(window).width();
+    //c canvas.height = $(window).height();
+    //c drawWidth = canvas.clientWidth;
+    //c drawHeight = img.height * canvas.clientWidth / currentImageWidth;
+    //c scrollHeight = Math.max(0, drawHeight - canvas.clientHeight);
+    //c drawImage();
     if (currentImageWidth) {
       img.width = Math.min(currentImageWidth, $(window).width());
     }
+  }
+
+  function scrollImageStart(event) {
+    console.log("scrollStart");
+    scrollYStart = event.pageY + scrollY;
+    scrolling = true;
+  }
+
+  function scrollImageEnd(event) {
+    console.log("scrollEnd");
+    scrolling = false;
+  }
+
+//s  = 10
+//sy = 50 - 10 = 40
+//
+//s   = 40 - 50
+
+  function scrollImage(event) {
+    if (scrolling) {
+      console.log("scrollImage");
+      scrollY = event.pageY - scrollYStart;
+      scrollY = Math.min(scrollY, scrollHeight);
+      scrollY = Math.max(0, scrollY);
+    }
+    drawImage();
   }
 
   function onImgLoad() {
@@ -125,6 +170,7 @@ $(function(){
     ' ul li a strong { margin-right:10px; }' +
     '</style>' +
     '<div id="slideshow"><div id="ui"><span id="page"></span><div id="forward">-&gt;</div><div id="backward">&lt;-</div></div><img /></div>');
+    //c '<div id="slideshow"><div id="ui"><span id="page"></span><div id="forward">-&gt;</div><div id="backward">&lt;-</div></div><canvas><img /></canvas></div>');
   $("a").each(function(index) {
     if (isImage(this.href)) {
       var index = images.length;
@@ -143,6 +189,7 @@ $(function(){
       }(index));
     }
   });
+  //c $("canvas").mousemove(scrollImage).mousedown(scrollImageStart).mouseup(scrollImageEnd);
   $("#backward").mouseup(function() {
     console.log("forward");
     --currentIndex;
@@ -168,5 +215,6 @@ $(function(){
 
   img = document.getElementsByTagName("img")[0];
   img.onload = onImgLoad;
+  //c canvas = document.getElementsByTagName("canvas")[0];
 });
 
